@@ -12,18 +12,22 @@ namespace web_api_restaurante.Controllers
     [Route("[controller]")]
     public class ProdutoController : ControllerBase
     {
+     //para recuperar a string de conexão
         private readonly string? _connectionString;
 
         //ctor para criar construtor
         public ProdutoController(IConfiguration configuration)
         {
+        //na conexão colocamos o que colocamos na appsettings
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
         //para abrir a conexao
-        //DbConnection auxilia 
+        //DbConnection interface que auxilia a conexão c a base de dados
         private IDbConnection OpenConnection()
         {
+         //passamos a string de conexão
+         //interface que auxilia a conexão com base de dados
             IDbConnection dbConnection = new SqliteConnection(_connectionString);
             dbConnection.Open();
             return dbConnection;
@@ -31,11 +35,15 @@ namespace web_api_restaurante.Controllers
 
 
 
+//método para recuperar produtos cadastrados, get
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+        //abre conexão
             using IDbConnection dbConnection = OpenConnection();
             string sql = "select id, nome, descricao, imageUrl from Produto; ";
+
+             //armazenar resultado da conexão
             var result = await dbConnection.QueryAsync<Produto>(sql);
 
             return Ok(result);
